@@ -1,0 +1,345 @@
+/*
+ * Copyright (C) 2017 a.schild
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package br.com.anteros.nextcloud.api.provisioning;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+import br.com.anteros.nextcloud.api.ServerConfig;
+import br.com.anteros.nextcloud.api.utils.ConnectorCommon;
+import br.com.anteros.nextcloud.api.utils.ListXMLAnswer;
+import br.com.anteros.nextcloud.api.utils.NextCloudResponseHelper;
+import br.com.anteros.nextcloud.api.utils.XMLAnswer;
+import br.com.anteros.nextcloud.api.utils.XMLAnswerParser;
+
+/**
+ *
+ * @author a.schild
+ *
+ * https://docs.nextcloud.com/server/11.0/admin_manual/configuration_user/user_provisioning_api.html
+ *
+ */
+public class ProvisionConnector
+{
+    private final static String ROOT_PART= "ocs/v1.php/cloud/";
+    private final static String USERS_PART= ROOT_PART+"users";
+    private final static String GROUPS_PART= ROOT_PART+"groups";
+
+    private final ConnectorCommon connectorCommon;
+
+    public ProvisionConnector(ServerConfig serverConfig) {
+        this.connectorCommon = new ConnectorCommon(serverConfig);
+    }
+
+    /**
+     * Creates a user
+     *
+     * @param userId unique identifier of the user
+     * @param password password needs to meet nextcloud criteria or operation will fail
+     * @return true if the operation succeeded
+     */
+    public boolean createUser(String userId, String password)
+    {
+    	List<NameValuePair> postParams= new LinkedList<>();
+        postParams.add(new BasicNameValuePair("userid", userId));
+        postParams.add(new BasicNameValuePair("password", password));
+        return NextCloudResponseHelper.isStatusCodeOkay(connectorCommon.executePost(USERS_PART, postParams, XMLAnswerParser.getInstance(XMLAnswer.class)));
+    }
+
+
+    /**
+     * Deletes a user
+     *
+     * @param userId unique identifier of the user
+     * @return true if the operation succeeded
+     */
+    public boolean deleteUser(String userId)
+    {
+        return NextCloudResponseHelper.isStatusCodeOkay(connectorCommon.executeDelete(USERS_PART, userId, null, XMLAnswerParser.getInstance(XMLAnswer.class)));
+    }
+
+    /**
+     * Gets all user IDs of this instance
+     *
+     * @return all user IDs
+     */
+    public List<String> getUsers()
+    {
+        return getUsers(null, -1, -1);
+    }
+
+
+    /**
+     * Get all matching user IDs
+     *
+     * @param search pass null when you don't wish to filter
+     * @param limit pass -1 for no limit
+     * @param offset pass -1 for no offset
+     * @return matched user IDs
+     */
+    public List<String> getUsers(
+            String search, int limit, int offset)
+    {
+    	 List<NameValuePair> queryParams= new LinkedList<>();
+         if (limit != -1)
+         {
+             queryParams.add(new BasicNameValuePair("limit", Integer.toString(limit)));
+         }
+         if (offset != -1)
+         {
+             queryParams.add(new BasicNameValuePair("offset", Integer.toString(offset)));
+         }
+         if (search != null)
+         {
+             queryParams.add(new BasicNameValuePair("search", search));
+         }
+        return NextCloudResponseHelper.getAndCheckStatus(connectorCommon.executeGet(USERS_PART, queryParams, XMLAnswerParser.getInstance(UsersXMLAnswer.class))).getUsers();
+    }
+
+
+    /**
+     * Gets all available information of one user
+     *
+     * @param userId unique identifier of the user
+     * @return user object containing all information
+     */
+    public User getUser(String userId)
+    {
+        return connectorCommon.executeGet(USERS_PART+"/"+userId, Collections.emptyList(), XMLAnswerParser.getInstance(UserXMLAnswer.class)).getUser();
+    }
+
+
+    /**
+     * Changes a single attribute of a user
+     *
+     * @param userId unique identifier of the user
+     * @param key the attribute to change
+     * @param value the value to set
+     * @return true if the operation succeeded
+     */
+    public boolean editUser(String userId, UserData key, String value)
+    {
+    	List<NameValuePair> queryParams= new LinkedList<>();
+        queryParams.add(new BasicNameValuePair("key", key.name().toLowerCase()));
+        queryParams.add(new BasicNameValuePair("value", value));
+        return NextCloudResponseHelper.isStatusCodeOkay(connectorCommon.executePut(USERS_PART, userId, queryParams, XMLAnswerParser.getInstance(XMLAnswer.class)));
+    }
+
+    /**
+     * Enables a user
+     *
+     * @param userId unique identifier of the user
+     * @return true if the operation succeeded
+     */
+    public boolean enableUser(String userId)
+    {
+        return NextCloudResponseHelper.isStatusCodeOkay(connectorCommon.executePut(USERS_PART, userId + "/enable", null, XMLAnswerParser.getInstance(XMLAnswer.class)));
+    }
+
+    /**
+     * Disables a user
+     *
+     * @param userId unique identifier of the user
+     * @return true if the operation succeeded
+     */
+    public boolean disableUser(String userId)
+    {
+        return NextCloudResponseHelper.isStatusCodeOkay(connectorCommon.executePut(USERS_PART, userId + "/disable", null, XMLAnswerParser.getInstance(XMLAnswer.class)));
+    }
+
+
+    /**
+     * Gets all groups of a user
+     *
+     * @param userId unique identifier of the user
+     * @return matched group IDs
+     */
+    public List<String> getGroupsOfUser(String userId)
+    {
+        return NextCloudResponseHelper.getAndCheckStatus(connectorCommon.executeGet(USERS_PART + "/" + userId + "/groups", null, XMLAnswerParser.getInstance(GroupsXMLAnswer.class))).getGroups();
+    }
+
+    /**
+     * Adds a user to a group
+     *
+     * @param userId unique identifier of the user
+     * @param groupId unique identifier of the group
+     * @return true if the operation succeeded
+     */
+    public boolean addUserToGroup(String userId, String groupId)
+    {
+    	List<NameValuePair> queryParams= Collections.singletonList(new BasicNameValuePair("groupid", groupId));
+        return NextCloudResponseHelper.isStatusCodeOkay(connectorCommon.executePost(USERS_PART + "/" + userId + "/groups", queryParams, XMLAnswerParser.getInstance(XMLAnswer.class)));
+    }
+
+   /**
+     * Removes a user from a group
+     *
+     * @param userId unique identifier of the user
+     * @param groupId unique identifier of the group
+     * @return true if the operation succeeded
+     */
+    public boolean removeUserFromGroup(String userId, String groupId)
+    {
+    	List<NameValuePair> queryParams= Collections.singletonList(new BasicNameValuePair("groupid", groupId));
+        return NextCloudResponseHelper.isStatusCodeOkay(connectorCommon.executeDelete(USERS_PART, userId + "/groups", queryParams, XMLAnswerParser.getInstance(XMLAnswer.class)));
+    }
+
+    /**
+     * Gets all groups this user is a subadministrator of
+     *
+     * @param userId unique identifier of the user
+     * @return matched group IDs
+     */
+    public List<String> getSubadminGroupsOfUser(String userId)
+    {
+        return NextCloudResponseHelper.getAndCheckStatus(connectorCommon.executeGet(USERS_PART + "/" + userId + "/subadmins", null, XMLAnswerParser.getInstance(ListXMLAnswer.class))).getResult();
+    }
+
+    
+    /**
+     * Promotes a user to a subadministrator of a group
+     *
+     * @param userId unique identifier of the user
+     * @param groupId unique identifier of the group
+     * @return true if the operation succeeded
+     */
+    public boolean promoteToSubadmin(String userId, String groupId)
+    {
+    	List<NameValuePair> queryParams= Collections.singletonList(new BasicNameValuePair("groupid", groupId));
+        return NextCloudResponseHelper.isStatusCodeOkay(connectorCommon.executePost(USERS_PART + "/" + userId + "/subadmins", queryParams, XMLAnswerParser.getInstance(XMLAnswer.class)));
+    }
+
+    /**
+     * Remove subadministrator rights of a user for a group
+     *
+     * @param userId unique identifier of the user
+     * @param groupId unique identifier of the group
+     * @return true if the operation succeeded
+     */
+    public boolean demoteSubadmin(String userId, String groupId)
+    {
+    	List<NameValuePair> queryParams= Collections.singletonList(new BasicNameValuePair("groupid", groupId));
+        return NextCloudResponseHelper.isStatusCodeOkay(connectorCommon.executeDelete(USERS_PART, userId + "/subadmins", queryParams, XMLAnswerParser.getInstance(XMLAnswer.class)));
+    }
+
+    
+
+    /**
+     * Sends the welcome email to a user
+     *
+     * @param userId unique identifier of the user
+     * @return true if the operation succeeded
+     */
+    public boolean sendWelcomeMail(String userId)
+    {
+        return NextCloudResponseHelper.isStatusCodeOkay(connectorCommon.executePost(USERS_PART + "/" + userId + "/welcome", null, XMLAnswerParser.getInstance(XMLAnswer.class)));
+    }
+
+
+    /**
+     * Gets all members of a group
+     *
+     * @param groupId unique identifier of the user
+     * @return user IDs of members
+     */
+    public List<String> getMembersOfGroup(String groupId)
+    {
+        return NextCloudResponseHelper.getAndCheckStatus(connectorCommon.executeGet(GROUPS_PART + "/" + groupId, null, XMLAnswerParser.getInstance(UsersXMLAnswer.class))).getUsers();
+    }
+
+
+
+    /**
+     * Gets all subadministrators of a group
+     *
+     * @param groupId unique identifier of the group
+     * @return user IDs of subadministrators
+     */
+    public List<String> getSubadminsOfGroup(String groupId)
+    {
+        return NextCloudResponseHelper.getAndCheckStatus(connectorCommon.executeGet(GROUPS_PART + "/" + groupId + "/subadmins", null, XMLAnswerParser.getInstance(ListXMLAnswer.class))).getResult();
+    }
+
+    /**
+     * Creates a group
+     *
+     * @param groupId unique identifier of the group
+     * @return true if the operation succeeded
+     */
+    public boolean createGroup(String groupId)
+    {
+    	List<NameValuePair> postParams= new LinkedList<>();
+        postParams.add(new BasicNameValuePair("groupid", groupId));
+        return NextCloudResponseHelper.isStatusCodeOkay(connectorCommon.executePost(GROUPS_PART, postParams, XMLAnswerParser.getInstance(XMLAnswer.class)));
+    }
+
+
+    /**
+     * Deletes a group
+     *
+     * @param groupId unique identifier of the group
+     * @return true if the operation succeeded
+     */
+    public boolean deleteGroup(String groupId)
+    {
+        return NextCloudResponseHelper.isStatusCodeOkay(connectorCommon.executeDelete(GROUPS_PART, groupId, null, XMLAnswerParser.getInstance(XMLAnswer.class)));
+    }
+
+    /**
+     * Get all group IDs of this instance
+     *
+     * @return all group IDs
+     */
+    public List<String> getGroups()
+    {
+        return getGroups(null, -1, -1);
+    }
+
+    /**
+     * Get all matching group IDs
+     *
+     * @param search pass null when you don't wish to filter
+     * @param limit pass -1 for no limit
+     * @param offset pass -1 for no offset
+     * @return matching group IDs
+     */
+    public List<String> getGroups(String search, int limit, int offset)
+    {
+    	List<NameValuePair> queryParams= new LinkedList<>();
+        if (limit != -1)
+        {
+            queryParams.add(new BasicNameValuePair("limit", Integer.toString(limit)));
+        }
+        if (offset != -1)
+        {
+            queryParams.add(new BasicNameValuePair("offset", Integer.toString(offset)));
+        }
+        if (search != null)
+        {
+            queryParams.add(new BasicNameValuePair("search", search));
+        }
+        return connectorCommon.executeGet(GROUPS_PART, queryParams, XMLAnswerParser.getInstance(GroupsXMLAnswer.class)).getGroups();
+    }
+
+   
+}
