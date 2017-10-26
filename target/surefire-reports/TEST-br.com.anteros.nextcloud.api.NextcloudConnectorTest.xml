@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="29" failures="0" name="br.com.anteros.nextcloud.api.NextcloudConnectorTest" time="0.001" errors="0" skipped="0">
+<testsuite tests="29" failures="0" name="br.com.anteros.nextcloud.api.NextcloudConnectorTest" time="0.004" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib"/>
@@ -26,7 +26,7 @@
 "/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="os.name" value="Mac OS X"/>
-    <property name="classworlds.conf" value="/Volumes/dadosmac/projetos/workspace_anteros_produtos/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf3268588156610256766.tmp"/>
+    <property name="classworlds.conf" value="/Volumes/dadosmac/projetos/workspace_anteros_produtos/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf1744734477630461533.tmp"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
     <property name="java.library.path" value="/Users/edson/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
@@ -66,18 +66,18 @@
   <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t02_testGetUsers" time="0"/>
   <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t03_testGetUsers_3args" time="0"/>
   <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t04_testEditUser" time="0"/>
-  <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t05_testDisableUser" time="0"/>
+  <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t05_testDisableUser" time="0.001"/>
   <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t06_testGetUser" time="0"/>
   <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t07_testEnableUser" time="0"/>
   <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t08_testCreateGroup" time="0"/>
   <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t09_testGetGroups_0args" time="0"/>
   <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t10_testGetGroups_3args" time="0"/>
   <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t11_testAddUserToGroup" time="0"/>
-  <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t12_testGetGroupsOfUser" time="0"/>
+  <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t12_testGetGroupsOfUser" time="0.001"/>
   <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t13_testGetMembersOfGroup" time="0"/>
   <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t14_testPromoteToSubadmin" time="0"/>
-  <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t15_testGetSubadminGroupsOfUser" time="0.001"/>
-  <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t16_testGetSubadminsOfGroup" time="0"/>
+  <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t15_testGetSubadminGroupsOfUser" time="0"/>
+  <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t16_testGetSubadminsOfGroup" time="0.001"/>
   <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t17_testDemoteSubadmin" time="0"/>
   <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t18_testRemoveUserFromGroup" time="0"/>
   <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t19_testDeleteUser" time="0"/>
@@ -85,7 +85,7 @@
   <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t21_testCreateFolder" time="0"/>
   <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t22_testGetFolders" time="0"/>
   <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t23_testFolderExists" time="0"/>
-  <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t24_testDeleteFolder" time="0"/>
+  <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t24_testDeleteFolder" time="0.001"/>
   <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t25_testUploadFile" time="0"/>
   <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t26_testFileExists" time="0"/>
   <testcase classname="br.com.anteros.nextcloud.api.NextcloudConnectorTest" name="t27_testRemoveFile" time="0"/>

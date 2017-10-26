@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="7" failures="0" name="br.com.anteros.nextcloud.api.filesharing.FilesharingConnectorTest" time="0.005" errors="0" skipped="0">
+<testsuite tests="7" failures="0" name="br.com.anteros.nextcloud.api.filesharing.FilesharingConnectorTest" time="0.004" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib"/>
@@ -26,7 +26,7 @@
 "/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="os.name" value="Mac OS X"/>
-    <property name="classworlds.conf" value="/Volumes/dadosmac/projetos/workspace_anteros_produtos/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf3268588156610256766.tmp"/>
+    <property name="classworlds.conf" value="/Volumes/dadosmac/projetos/workspace_anteros_produtos/.metadata/.plugins/org.eclipse.m2e.launching/launches/m2conf1744734477630461533.tmp"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
     <property name="java.library.path" value="/Users/edson/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
@@ -62,11 +62,11 @@
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase classname="br.com.anteros.nextcloud.api.filesharing.FilesharingConnectorTest" name="t01_testDoShare" time="0.004"/>
-  <testcase classname="br.com.anteros.nextcloud.api.filesharing.FilesharingConnectorTest" name="t02_testGetShares" time="0"/>
+  <testcase classname="br.com.anteros.nextcloud.api.filesharing.FilesharingConnectorTest" name="t01_testDoShare" time="0.002"/>
+  <testcase classname="br.com.anteros.nextcloud.api.filesharing.FilesharingConnectorTest" name="t02_testGetShares" time="0.001"/>
   <testcase classname="br.com.anteros.nextcloud.api.filesharing.FilesharingConnectorTest" name="t03_testEditShare" time="0"/>
   <testcase classname="br.com.anteros.nextcloud.api.filesharing.FilesharingConnectorTest" name="t04_testGetSharesOfPath" time="0"/>
   <testcase classname="br.com.anteros.nextcloud.api.filesharing.FilesharingConnectorTest" name="t05_testEditShare_Map" time="0"/>
-  <testcase classname="br.com.anteros.nextcloud.api.filesharing.FilesharingConnectorTest" name="t06_testGetShareInfo" time="0"/>
-  <testcase classname="br.com.anteros.nextcloud.api.filesharing.FilesharingConnectorTest" name="t07_testDeleteShare" time="0.001"/>
+  <testcase classname="br.com.anteros.nextcloud.api.filesharing.FilesharingConnectorTest" name="t06_testGetShareInfo" time="0.001"/>
+  <testcase classname="br.com.anteros.nextcloud.api.filesharing.FilesharingConnectorTest" name="t07_testDeleteShare" time="0"/>
 </testsuite>

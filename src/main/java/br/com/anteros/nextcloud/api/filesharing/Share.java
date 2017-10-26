@@ -149,4 +149,72 @@ public class Share
             return new SharePermissions(v);
         }
     }
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public void setShareType(ShareType shareType) {
+		this.shareType = shareType;
+	}
+
+	public void setOwnerId(String ownerId) {
+		this.ownerId = ownerId;
+	}
+
+	public void setOwnerDisplayName(String ownerDisplayName) {
+		this.ownerDisplayName = ownerDisplayName;
+	}
+
+	public void setSharePermissions(SharePermissions sharePermissions) {
+		this.sharePermissions = sharePermissions;
+	}
+
+	public void setFileOwnerId(String fileOwnerId) {
+		this.fileOwnerId = fileOwnerId;
+	}
+
+	public void setFileOwnerDisplayName(String fileOwnerDisplayName) {
+		this.fileOwnerDisplayName = fileOwnerDisplayName;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	public void setItemType(ItemType itemType) {
+		this.itemType = itemType;
+	}
+
+	public void setFileTarget(String fileTarget) {
+		this.fileTarget = fileTarget;
+	}
+
+	public void setShareWithId(String shareWithId) {
+		this.shareWithId = shareWithId;
+	}
+
+	public void setShareWithDisplayName(String shareWithDisplayName) {
+		this.shareWithDisplayName = shareWithDisplayName;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public void setShareTime(Instant shareTime) {
+		this.shareTime = shareTime;
+	}
+
+	public void setExpiration(LocalDate expiration) {
+		this.expiration = expiration;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public void setMimetype(String mimetype) {
+		this.mimetype = mimetype;
+	}
 }

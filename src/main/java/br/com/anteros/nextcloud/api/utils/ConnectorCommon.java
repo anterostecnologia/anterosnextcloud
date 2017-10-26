@@ -29,25 +29,25 @@ public class ConnectorCommon {
 	static {
 		try {
 
-			TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-				public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-					return null;
-				}
-
-				public void checkClientTrusted(X509Certificate[] certs, String authType) {
-				}
-
-				public void checkServerTrusted(X509Certificate[] certs, String authType) {
-				}
-
-			} };
-
-			SSLContext sslcontext = SSLContext.getInstance("SSL");
-			sslcontext.init(null, trustAllCerts, new java.security.SecureRandom());
-			HttpsURLConnection.setDefaultSSLSocketFactory(sslcontext.getSocketFactory());
-			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext);
-			CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
-			Unirest.setHttpClient(httpclient);
+//			TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+//				public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+//					return null;
+//				}
+//
+//				public void checkClientTrusted(X509Certificate[] certs, String authType) {
+//				}
+//
+//				public void checkServerTrusted(X509Certificate[] certs, String authType) {
+//				}
+//
+//			} };
+//
+//			SSLContext sslcontext = SSLContext.getInstance("SSL");
+//			sslcontext.init(null, trustAllCerts, new java.security.SecureRandom());
+//			HttpsURLConnection.setDefaultSSLSocketFactory(sslcontext.getSocketFactory());
+//			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext);
+//			CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
+//			Unirest.setHttpClient(httpclient);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -64,7 +64,7 @@ public class ConnectorCommon {
 
 			com.mashape.unirest.http.HttpResponse<String> response = Unirest.get(url.toString())
 					.header("content-type", "application/json").header("ocs-apirequest", "true")
-					.header("authorization", "Basic YWRtaW5AY3JtZ2F6aW4uY29tLmJyOkFudGVyb3NANzI3MjA0NTY3ODk=")
+					.header("authorization", "Basic YW50ZXJvczo3MjcyMDQ=")
 					.header("cache-control", "no-cache").asString();
 			System.out.println(response);
 
@@ -81,7 +81,7 @@ public class ConnectorCommon {
 			URI url = buildUrl(part, postParams);
 			com.mashape.unirest.http.HttpResponse<String> response = Unirest.post(url.toString())
 					.header("content-type", "application/json").header("ocs-apirequest", "true")
-					.header("authorization", "Basic YWRtaW5AY3JtZ2F6aW4uY29tLmJyOkFudGVyb3NANzI3MjA0NTY3ODk=")
+					.header("authorization", "Basic YW50ZXJvczo3MjcyMDQ=")
 					.header("cache-control", "no-cache").asString();
 
 			R parseResponse = parser.parseResponse(new StringReader(response.getBody()));
