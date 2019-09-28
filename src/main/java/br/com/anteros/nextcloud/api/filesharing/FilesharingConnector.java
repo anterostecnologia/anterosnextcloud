@@ -23,6 +23,9 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
 import br.com.anteros.nextcloud.api.ServerConfig;
 import br.com.anteros.nextcloud.api.exception.MoreThanOneShareFoundException;
 import br.com.anteros.nextcloud.api.provisioning.ShareData;
@@ -30,8 +33,6 @@ import br.com.anteros.nextcloud.api.utils.ConnectorCommon;
 import br.com.anteros.nextcloud.api.utils.NextCloudResponseHelper;
 import br.com.anteros.nextcloud.api.utils.XMLAnswer;
 import br.com.anteros.nextcloud.api.utils.XMLAnswerParser;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 
 /**
  *
@@ -62,6 +63,16 @@ public class FilesharingConnector
     }
 
     /**
+     * Get all shares of this user asynchronously
+     *
+     * @return a CompletableFuture containing the result of the operation
+     */
+    public CompletableFuture<SharesXMLAnswer> getSharesAsync()
+    {
+        return getSharesAsync(null, false, false);
+    }
+
+    /**
      * Gets all shares from a given file/folder
      *
      * @param path      path to file/folder
@@ -71,7 +82,20 @@ public class FilesharingConnector
      */
     public List<Share> getShares(String path, boolean reShares, boolean subShares)
     {
-    	List<NameValuePair> queryParams= new LinkedList<>();
+        return NextCloudResponseHelper.getAndCheckStatus(getSharesAsync(path,reShares,subShares)).getShares();
+    }
+
+    /**
+     * Gets all shares from a given file/folder asynchronously
+     *
+     * @param path      path to file/folder
+     * @param reShares  returns not only the shares from the current user but all shares from the given file
+     * @param subShares returns all shares within a folder, given that path defines a folder
+     * @return a CompletableFuture containing the result of the operation
+     */
+    public CompletableFuture<SharesXMLAnswer> getSharesAsync(String path, boolean reShares, boolean subShares)
+    {
+        List<NameValuePair> queryParams= new LinkedList<>();
         if (path != null)
         {
             queryParams.add(new BasicNameValuePair("path", path));
@@ -84,9 +108,8 @@ public class FilesharingConnector
         {
             queryParams.add(new BasicNameValuePair("subfiles", "true"));
         }
-        return connectorCommon.executeGet(SHARES_PART, queryParams, XMLAnswerParser.getInstance(SharesXMLAnswer.class)).getShares();
+        return connectorCommon.executeGet(SHARES_PART, queryParams, XMLAnswerParser.getInstance(SharesXMLAnswer.class));
     }
-
 
     /**
      * Get share info for a single share
@@ -96,7 +119,7 @@ public class FilesharingConnector
      */
     public Share getShareInfo(int shareId)
     {
-        SharesXMLAnswer xa= NextCloudResponseHelper.getAndCheckStatus(connectorCommon.executeGet(SHARES_PART+"/"+Integer.toString(shareId), null, XMLAnswerParser.getInstance(SharesXMLAnswer.class)));
+        SharesXMLAnswer xa= NextCloudResponseHelper.getAndCheckStatus(getShareInfoAsync(shareId));
         if (xa.getShares() == null)
         {
             return null;
@@ -108,13 +131,23 @@ public class FilesharingConnector
         throw new MoreThanOneShareFoundException(shareId);
     }
 
+    /**
+     * Get share info for a single share asynchronously
+     *
+     * @param shareId      id of share (Not path of share)
+     * @return a CompletableFuture containing the result of the operation
+     */
+    public CompletableFuture<SharesXMLAnswer> getShareInfoAsync(int shareId)
+    {
+        return connectorCommon.executeGet(SHARES_PART+"/"+Integer.toString(shareId), null, XMLAnswerParser.getInstance(SharesXMLAnswer.class));
+    }
 
     /**
      * Shares the specified path with the provided parameters
      *
      * @param path                  path to the file/folder which should be shared
-     * @param shareType             0 = user; 1 = group; 3 = public link; 6 = federated cloud share
-     * @param shareWithUserOrGroupId user / group id with which the file should be shared
+     * @param shareType             0 = user; 1 = group; 3 = public link; 4 = email; 6 = federated cloud share
+     * @param shareWithUserOrGroupIdOrEmail user / group id / email with which the file should be shared
      * @param publicUpload          allow public upload to a public shared folder (true/false)
      * @param password              password to protect public link Share with
      * @param permissions           1 = read; 2 = update; 4 = create; 8 = delete; 16 = share; 31 = all (default: 31, for public shares: 1)
@@ -123,17 +156,37 @@ public class FilesharingConnector
     public Share doShare(
             String path,
             ShareType shareType,
-            String shareWithUserOrGroupId,
+            String shareWithUserOrGroupIdOrEmail,
             Boolean publicUpload,
             String password,
             SharePermissions permissions)
     {
-        
-        
+        return NextCloudResponseHelper.getAndCheckStatus(doShareAsync(path, shareType, shareWithUserOrGroupIdOrEmail, publicUpload, password, permissions)).getShare();
+    }
+
+    /**
+    * Shares the specified path with the provided parameters asynchronously
+    *
+    * @param path                  path to the file/folder which should be shared
+    * @param shareType             0 = user; 1 = group; 3 = public link; 4 = email; 6 = federated cloud share
+    * @param shareWithUserOrGroupIdOrEmail user / group id / email with which the file should be shared
+    * @param publicUpload          allow public upload to a public shared folder (true/false)
+    * @param password              password to protect public link Share with
+    * @param permissions           1 = read; 2 = update; 4 = create; 8 = delete; 16 = share; 31 = all (default: 31, for public shares: 1)
+    * @return a CompletableFuture containing the result of the operation
+    */
+    public CompletableFuture<SingleShareXMLAnswer> doShareAsync(
+            String path,
+            ShareType shareType,
+            String shareWithUserOrGroupIdOrEmail,
+            Boolean publicUpload,
+            String password,
+            SharePermissions permissions)
+    {
         List<NameValuePair> postParams= new LinkedList<>();
         postParams.add(new BasicNameValuePair("path", path));
         postParams.add(new BasicNameValuePair("shareType", Integer.toString(shareType.getIntValue())));
-        postParams.add(new BasicNameValuePair("shareWith", shareWithUserOrGroupId));
+        postParams.add(new BasicNameValuePair("shareWith", shareWithUserOrGroupIdOrEmail));
         if (publicUpload != null)
         {
             postParams.add(new BasicNameValuePair("publicUpload", publicUpload ? "true" : "false"));
@@ -147,10 +200,8 @@ public class FilesharingConnector
             postParams.add(new BasicNameValuePair("permissions", Integer.toString(permissions.getCurrentPermission())));
         }
 
-        return connectorCommon.executePost(SHARES_PART, postParams, XMLAnswerParser.getInstance(SingleShareXMLAnswer.class)).getShare();
+        return connectorCommon.executePost(SHARES_PART, postParams, XMLAnswerParser.getInstance(SingleShareXMLAnswer.class));
     }
-
-   
 
     /**
      * Changes a single attribute of a share
@@ -162,10 +213,22 @@ public class FilesharingConnector
      */
     public boolean editShare(int shareId, ShareData key, String value)
     {
-    	List<NameValuePair> queryParams= Collections.singletonList(new BasicNameValuePair(key.parameterName, value));
-        return NextCloudResponseHelper.isStatusCodeOkay(connectorCommon.executePut(SHARES_PART, Integer.toString(shareId), queryParams, XMLAnswerParser.getInstance(XMLAnswer.class)));
+        return NextCloudResponseHelper.isStatusCodeOkay(editShareAsync(shareId, key, value));
     }
 
+    /**
+     * Changes a single attribute of a share asynchronously
+     *
+     * @param shareId unique identifier of the share
+     * @param key the attribute to change
+     * @param value the value to set
+     * @return a CompletableFuture containing the result of the operation
+     */
+    public CompletableFuture<XMLAnswer> editShareAsync(int shareId, ShareData key, String value)
+    {
+        List<NameValuePair> queryParams= Collections.singletonList(new BasicNameValuePair(key.parameterName, value));
+        return connectorCommon.executePut(SHARES_PART, Integer.toString(shareId), queryParams, XMLAnswerParser.getInstance(XMLAnswer.class));
+    }
 
     /**
      * Changes multiple attributes of a share at once
@@ -176,12 +239,21 @@ public class FilesharingConnector
      */
     public boolean editShare(int shareId, Map<ShareData,String> values)
     {
-    	List<NameValuePair> queryParams = values.entrySet().stream()
-                .map(e -> new BasicNameValuePair(e.getKey().parameterName, e.getValue())).collect(Collectors.toList());
-        return NextCloudResponseHelper.isStatusCodeOkay(connectorCommon.executePut(SHARES_PART, Integer.toString(shareId), queryParams, XMLAnswerParser.getInstance(XMLAnswer.class)));
+        return NextCloudResponseHelper.isStatusCodeOkay(editShareAsync(shareId, values));
     }
 
-    
+    /**
+     * Changes multiple attributes of a share at once asynchronously
+     *
+     * @param shareId unique identifier of the share
+     * @param values a Map containing the attributes to set
+     * @return a CompletableFuture containing the result of the operation
+     */
+    public CompletableFuture<XMLAnswer> editShareAsync(int shareId, Map<ShareData, String> values) {
+        List<NameValuePair> queryParams = values.entrySet().stream()
+                .map(e -> new BasicNameValuePair(e.getKey().parameterName, e.getValue())).collect(Collectors.toList());
+        return connectorCommon.executePut(SHARES_PART, Integer.toString(shareId), queryParams, XMLAnswerParser.getInstance(XMLAnswer.class));
+    }
 
     /**
      * Deletes a share
@@ -191,7 +263,17 @@ public class FilesharingConnector
      */
     public boolean deleteShare(int shareId)
     {
-        return NextCloudResponseHelper.isStatusCodeOkay(connectorCommon.executeDelete(SHARES_PART, Integer.toString(shareId), null, XMLAnswerParser.getInstance(XMLAnswer.class)));
+        return NextCloudResponseHelper.isStatusCodeOkay(deleteShareAsync(shareId));
     }
 
+    /**
+     * Deletes a share asynchronously
+     *
+     * @param shareId unique identifier of the share
+     * @return a CompletableFuture containing the result of the operation
+     */
+    public CompletableFuture<XMLAnswer> deleteShareAsync(int shareId)
+    {
+        return connectorCommon.executeDelete(SHARES_PART, Integer.toString(shareId), null, XMLAnswerParser.getInstance(XMLAnswer.class));
+    }
 }

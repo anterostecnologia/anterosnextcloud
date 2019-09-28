@@ -25,6 +25,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -119,7 +120,7 @@ public class NextcloudConnectorTest {
     }
 
     @Test
-    public void t06_testGetUser() {
+    public void t06_testGetUser() throws InterruptedException, ExecutionException {
         System.out.println("getUser");
         if (_nc != null)
         {
@@ -153,7 +154,7 @@ public class NextcloudConnectorTest {
     }
 
     @Test
-    public void t09_testGetGroups_0args() {
+    public void t09_testGetGroups_0args() throws InterruptedException, ExecutionException {
         System.out.println("getGroups");
         if (_nc != null)
         {
@@ -164,7 +165,7 @@ public class NextcloudConnectorTest {
     }
 
     @Test
-    public void t10_testGetGroups_3args() {
+    public void t10_testGetGroups_3args() throws InterruptedException, ExecutionException {
         System.out.println("getGroups");
         if (_nc != null)
         {

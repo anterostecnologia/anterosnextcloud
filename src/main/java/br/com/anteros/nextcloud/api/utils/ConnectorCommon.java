@@ -1,148 +1,218 @@
 package br.com.anteros.nextcloud.api.utils;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.cert.X509Certificate;
+import java.nio.charset.Charset;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.HttpVersion;
 import org.apache.http.NameValuePair;
+import org.apache.http.StatusLine;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-
-import com.mashape.unirest.http.Unirest;
+import org.apache.http.concurrent.FutureCallback;
+import org.apache.http.entity.ContentType;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
 
 import br.com.anteros.nextcloud.api.ServerConfig;
 import br.com.anteros.nextcloud.api.exception.NextCloudApiException;
 
-public class ConnectorCommon {
-	private final ServerConfig serverConfig;
+public class ConnectorCommon
+{
+    private final ServerConfig serverConfig;
 
-	static {
-		try {
+    public ConnectorCommon(ServerConfig serverConfig) {
+        this.serverConfig = serverConfig;
+    }
 
-//			TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-//				public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-//					return null;
-//				}
-//
-//				public void checkClientTrusted(X509Certificate[] certs, String authType) {
-//				}
-//
-//				public void checkServerTrusted(X509Certificate[] certs, String authType) {
-//				}
-//
-//			} };
-//
-//			SSLContext sslcontext = SSLContext.getInstance("SSL");
-//			sslcontext.init(null, trustAllCerts, new java.security.SecureRandom());
-//			HttpsURLConnection.setDefaultSSLSocketFactory(sslcontext.getSocketFactory());
-//			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext);
-//			CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
-//			Unirest.setHttpClient(httpclient);
+    public <R> CompletableFuture<R> executeGet(String part, List<NameValuePair> queryParams, ResponseParser<R> parser)
+    {
+        try {
+            URI url= buildUrl(part, queryParams);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+            HttpRequestBase request = new HttpGet(url.toString());
+            return executeRequest(parser, request);
+        } catch (IOException e) {
+            throw new NextCloudApiException(e);
+        }
+    }
 
-	public ConnectorCommon(ServerConfig serverConfig) {
-		this.serverConfig = serverConfig;
-	}
+    public <R> CompletableFuture<R> executePost(String part, List<NameValuePair> postParams, ResponseParser<R> parser)
+    {
+        try {
+            URI url= buildUrl(part, postParams);
 
-	public <R> R executeGet(String part, List<NameValuePair> queryParams, ResponseParser<R> parser) {
-		try {
-			URI url = buildUrl(part, queryParams);
+            HttpRequestBase request = new HttpPost(url.toString());
+            return executeRequest(parser, request);
+        } catch (IOException e) {
+            throw new NextCloudApiException(e);
+        }
+    }
 
-			com.mashape.unirest.http.HttpResponse<String> response = Unirest.get(url.toString())
-					.header("content-type", "application/json").header("ocs-apirequest", "true")
-					.header("authorization", "Basic YW50ZXJvczo3MjcyMDQ=")
-					.header("cache-control", "no-cache").asString();
-			System.out.println(response);
+    public <R> CompletableFuture<R> executePut(String part1, String part2, List<NameValuePair> putParams, ResponseParser<R> parser)
+    {
+        try {
+            URI url= buildUrl(part1 + "/" + part2, putParams);
 
-			R parseResponse = parser.parseResponse(new StringReader(response.getBody()));
+            HttpRequestBase request = new HttpPut(url.toString());
+            return executeRequest(parser, request);
+        } catch (IOException e) {
+            throw new NextCloudApiException(e);
+        }
+    }
 
-			return parseResponse;
-		} catch (Exception e) {
-			throw new NextCloudApiException(e);
-		}
-	}
+    public <R> CompletableFuture<R> executeDelete(String part1, String part2, List<NameValuePair> deleteParams, ResponseParser<R> parser)
+    {
+        try {
+            URI url= buildUrl(part1 + "/" + part2, deleteParams);
 
-	public <R> R executePost(String part, List<NameValuePair> postParams, ResponseParser<R> parser) {
-		try {
-			URI url = buildUrl(part, postParams);
-			com.mashape.unirest.http.HttpResponse<String> response = Unirest.post(url.toString())
-					.header("content-type", "application/json").header("ocs-apirequest", "true")
-					.header("authorization", "Basic YW50ZXJvczo3MjcyMDQ=")
-					.header("cache-control", "no-cache").asString();
+            HttpRequestBase request = new HttpDelete(url.toString());
+            return executeRequest(parser, request);
+        } catch (IOException e) {
+            throw new NextCloudApiException(e);
+        }
+    }
 
-			R parseResponse = parser.parseResponse(new StringReader(response.getBody()));
+    private URI buildUrl(String subPath, List<NameValuePair> queryParams)
+    {
+        URIBuilder uB= new URIBuilder()
+        .setScheme(serverConfig.isUseHTTPS() ? "https" : "http")
+        .setHost(serverConfig.getServerName())
+        .setPort(serverConfig.getPort())
+        .setUserInfo(serverConfig.getUserName(), serverConfig.getPassword())
+        .setPath(subPath);
+        if (queryParams != null)
+        {
+            uB.addParameters(queryParams);
+        }
+        try {
+            return uB.build();
+        } catch (URISyntaxException e) {
+            throw new NextCloudApiException(e);
+        }
+    }
 
-			return parseResponse;
+    private <R> CompletableFuture<R> executeRequest(final ResponseParser<R> parser, HttpRequestBase request)
+            throws IOException, ClientProtocolException
+    {
+        // https://docs.nextcloud.com/server/14/developer_manual/core/ocs-share-api.html
+        request.addHeader("OCS-APIRequest", "true");
+        request.addHeader("Content-Type", "application/x-www-form-urlencoded");
+        request.setProtocolVersion(HttpVersion.HTTP_1_1);
 
-		} catch (Exception e) {
-			throw new NextCloudApiException(e);
-		}
-	}
+        HttpClientContext context = prepareContext();
 
-	public <R> R executePut(String part1, String part2, List<NameValuePair> putParams, ResponseParser<R> parser) {
-		try {
-			URI url = buildUrl(part1 + "/" + part2, putParams);
-			com.mashape.unirest.http.HttpResponse<String> response = Unirest.put(url.toString())
-					.header("content-type", "application/json").header("ocs-apirequest", "true")
-					.header("authorization", "Basic YWRtaW5AY3JtZ2F6aW4uY29tLmJyOkFudGVyb3NANzI3MjA0NTY3ODk=")
-					.header("cache-control", "no-cache").asString();
+        CompletableFuture<R> futureResponse = new CompletableFuture<>();
+        HttpAsyncClientSingleton.HTTPC_CLIENT.execute(request, context, new ResponseCallback<>(parser, futureResponse));
+        return futureResponse;
+    }
 
-			R parseResponse = parser.parseResponse(new StringReader(response.getBody()));
+    private HttpClientContext prepareContext()
+    {
+        HttpHost targetHost = new HttpHost(serverConfig.getServerName(), serverConfig.getPort(), serverConfig.isUseHTTPS() ? "https" : "http");
+        AuthCache authCache = new BasicAuthCache();
+        authCache.put(targetHost, new BasicScheme());
 
-			return parseResponse;
+        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        UsernamePasswordCredentials credentials
+         = new UsernamePasswordCredentials(serverConfig.getUserName(), serverConfig.getPassword());
+        credsProvider.setCredentials(AuthScope.ANY, credentials);
 
-		} catch (Exception e) {
-			throw new NextCloudApiException(e);
-		}
-	}
+        // Add AuthCache to the execution context
+        HttpClientContext context = HttpClientContext.create();
+        context.setCredentialsProvider(credsProvider);
+        context.setAuthCache(authCache);
+        return context;
+    }
 
-	public <R> R executeDelete(String part1, String part2, List<NameValuePair> deleteParams, ResponseParser<R> parser) {
-		try {
-			URI url = buildUrl(part1 + "/" + part2, deleteParams);
+    private final class ResponseCallback<R> implements FutureCallback<HttpResponse>
+    {
+        private final ResponseParser<R> parser;
+        private final CompletableFuture<R> futureResponse;
 
-			com.mashape.unirest.http.HttpResponse<String> response = Unirest.delete(url.toString())
-					.header("content-type", "application/json").header("ocs-apirequest", "true")
-					.header("authorization", "Basic YWRtaW5AY3JtZ2F6aW4uY29tLmJyOkFudGVyb3NANzI3MjA0NTY3ODk=")
-					.header("cache-control", "no-cache").asString();
+        private ResponseCallback(ResponseParser<R> parser, CompletableFuture<R> futureResponse)
+        {
+            this.parser = parser;
+            this.futureResponse = futureResponse;
+        }
 
-			R parseResponse = parser.parseResponse(new StringReader(response.getBody()));
+        @Override
+        public void completed(HttpResponse response)
+        {
+            try {
+                R result = handleResponse(parser, response);
+                futureResponse.complete(result);
+            } catch(Exception ex) {
+                futureResponse.completeExceptionally(ex);
+            }
+        }
 
-			return parseResponse;
+        private R handleResponse(ResponseParser<R> parser, HttpResponse response) throws IOException
+        {
+            StatusLine statusLine= response.getStatusLine();
+            if (statusLine.getStatusCode() == HttpStatus.SC_OK)
+            {
+                HttpEntity entity = response.getEntity();
+                if (entity != null)
+                {
+                    Charset charset = ContentType.getOrDefault(entity).getCharset();
+                    Reader reader = new InputStreamReader(entity.getContent(), charset);
+                    return parser.parseResponse(reader);
+                }
+                throw new NextCloudApiException("Empty response received");
+            }
+            throw new NextCloudApiException(String.format("Request failed with %d %s", statusLine.getStatusCode(), statusLine.getReasonPhrase()));
+        }
 
-		} catch (Exception e) {
-			throw new NextCloudApiException(e);
-		}
-	}
+        @Override
+        public void failed(Exception ex)
+        {
+            futureResponse.completeExceptionally(ex);
+        }
 
-	private URI buildUrl(String subPath, List<NameValuePair> queryParams) {
-		URIBuilder uB = new URIBuilder().setScheme(serverConfig.isUseHTTPS() ? "https" : "http")
-				.setHost(serverConfig.getServerName()+"/")
-				.setUserInfo(serverConfig.getUserName(), serverConfig.getPassword()).setPath(subPath);
-		if (queryParams != null) {
-			uB.addParameters(queryParams);
-		}
-		try {
-			return uB.build();
-		} catch (URISyntaxException e) {
-			throw new NextCloudApiException(e);
-		}
-	}
+        @Override
+        public void cancelled()
+        {
+            futureResponse.cancel(true);
+        }
+    }
 
-	public interface ResponseParser<R> {
-		public R parseResponse(Reader reader);
-	}
+    private static class HttpAsyncClientSingleton
+    {
+        private static final CloseableHttpAsyncClient HTTPC_CLIENT = HttpAsyncClients.createDefault();
+
+        private HttpAsyncClientSingleton() {
+        }
+
+        static {
+            HTTPC_CLIENT.start();
+        }
+    }
+
+    public interface ResponseParser<R>
+    {
+        public R parseResponse(Reader reader);
+    }
 }
