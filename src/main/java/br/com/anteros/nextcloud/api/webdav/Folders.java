@@ -16,30 +16,30 @@
  */
 package br.com.anteros.nextcloud.api.webdav;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.github.sardine.DavResource;
 import com.github.sardine.Sardine;
 
-import br.com.anteros.core.log.Logger;
-import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.nextcloud.api.ServerConfig;
-import br.com.anteros.nextcloud.api.exception.NextCloudApiException;
+import br.com.anteros.nextcloud.api.exception.NextcloudApiException;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *
  * @author a.schild
  */
-public class Folders extends AWebDavHandler{
+public class Folders extends AWebdavHandler{
 
-
-	protected static Logger LOG = LoggerProvider.getInstance().getLogger(AWebDavHandler.class.getName());
+    private static final Log LOG = LogFactory.getLog(Folders.class);
 
     public Folders(ServerConfig serverConfig) {
         super(serverConfig);
@@ -90,7 +90,7 @@ public class Folders extends AWebDavHandler{
         try {
             resources = sardine.list(path, depth);
         } catch (IOException e) {
-            throw new NextCloudApiException(e);
+            throw new NextcloudApiException(e);
         }
         finally
         {
@@ -134,7 +134,7 @@ public class Folders extends AWebDavHandler{
         try {
             sardine.createDirectory(path);
         } catch (IOException e) {
-            throw new NextCloudApiException(e);
+            throw new NextcloudApiException(e);
         }
         finally
         {
@@ -188,7 +188,7 @@ public class Folders extends AWebDavHandler{
             try {
                 resources = sardine.list(rootPathNew, depth);
             } catch (IOException e) {
-                throw new NextCloudApiException(e);
+                throw new NextcloudApiException(e);
             }
 
             for (DavResource res : resources)
@@ -209,7 +209,7 @@ public class Folders extends AWebDavHandler{
                             InputStream in = null;
                             if (sardine.exists(filePath)) {
                                 in = sardine.get(filePath);
-                                byte[] buffer = new byte[AWebDavHandler.FILE_BUFFER_SIZE];
+                                byte[] buffer = new byte[AWebdavHandler.FILE_BUFFER_SIZE];
                                 int bytesRead;
                                 File targetFile = new File(newDownloadDir + "/" + fileName);
                                 try (OutputStream outStream = new FileOutputStream(targetFile))

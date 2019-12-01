@@ -37,7 +37,7 @@ import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 
 import br.com.anteros.nextcloud.api.ServerConfig;
-import br.com.anteros.nextcloud.api.exception.NextCloudApiException;
+import br.com.anteros.nextcloud.api.exception.NextcloudApiException;
 
 public class ConnectorCommon
 {
@@ -55,7 +55,7 @@ public class ConnectorCommon
             HttpRequestBase request = new HttpGet(url.toString());
             return executeRequest(parser, request);
         } catch (IOException e) {
-            throw new NextCloudApiException(e);
+            throw new NextcloudApiException(e);
         }
     }
 
@@ -67,7 +67,7 @@ public class ConnectorCommon
             HttpRequestBase request = new HttpPost(url.toString());
             return executeRequest(parser, request);
         } catch (IOException e) {
-            throw new NextCloudApiException(e);
+            throw new NextcloudApiException(e);
         }
     }
 
@@ -79,7 +79,7 @@ public class ConnectorCommon
             HttpRequestBase request = new HttpPut(url.toString());
             return executeRequest(parser, request);
         } catch (IOException e) {
-            throw new NextCloudApiException(e);
+            throw new NextcloudApiException(e);
         }
     }
 
@@ -91,7 +91,7 @@ public class ConnectorCommon
             HttpRequestBase request = new HttpDelete(url.toString());
             return executeRequest(parser, request);
         } catch (IOException e) {
-            throw new NextCloudApiException(e);
+            throw new NextcloudApiException(e);
         }
     }
 
@@ -100,7 +100,6 @@ public class ConnectorCommon
         URIBuilder uB= new URIBuilder()
         .setScheme(serverConfig.isUseHTTPS() ? "https" : "http")
         .setHost(serverConfig.getServerName())
-        .setPort(serverConfig.getPort())
         .setUserInfo(serverConfig.getUserName(), serverConfig.getPassword())
         .setPath(subPath);
         if (queryParams != null)
@@ -110,7 +109,7 @@ public class ConnectorCommon
         try {
             return uB.build();
         } catch (URISyntaxException e) {
-            throw new NextCloudApiException(e);
+            throw new NextcloudApiException(e);
         }
     }
 
@@ -181,9 +180,9 @@ public class ConnectorCommon
                     Reader reader = new InputStreamReader(entity.getContent(), charset);
                     return parser.parseResponse(reader);
                 }
-                throw new NextCloudApiException("Empty response received");
+                throw new NextcloudApiException("Empty response received");
             }
-            throw new NextCloudApiException(String.format("Request failed with %d %s", statusLine.getStatusCode(), statusLine.getReasonPhrase()));
+            throw new NextcloudApiException(String.format("Request failed with %d %s", statusLine.getStatusCode(), statusLine.getReasonPhrase()));
         }
 
         @Override

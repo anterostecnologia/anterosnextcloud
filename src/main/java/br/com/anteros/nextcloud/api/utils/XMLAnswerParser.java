@@ -9,7 +9,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import br.com.anteros.nextcloud.api.exception.NextCloudApiException;
+import br.com.anteros.nextcloud.api.exception.NextcloudApiException;
 import br.com.anteros.nextcloud.api.utils.ConnectorCommon.ResponseParser;
 
 public class XMLAnswerParser<A extends XMLAnswer> implements ResponseParser<A>
@@ -23,7 +23,7 @@ public class XMLAnswerParser<A extends XMLAnswer> implements ResponseParser<A>
         try {
             jAXBContext = JAXBContext.newInstance(XMLAnswer.class, answerClass);
         } catch (JAXBException e) {
-            throw new NextCloudApiException(e);
+            throw new NextcloudApiException(e);
         }
     }
 
@@ -51,7 +51,7 @@ public class XMLAnswerParser<A extends XMLAnswer> implements ResponseParser<A>
         try {
             return tryParseAnswer(xmlStream);
         } catch (Exception e) {
-            throw new NextCloudApiException(e);
+            throw new NextcloudApiException(e);
         } finally {
             try {
                 xmlStream.close();

@@ -4,22 +4,24 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.anteros</groupId>
 	<artifactId>Anteros-NextCloud</artifactId>
-	<version>1.0.3</version>
+	<version>1.0.4</version>
 
-	<properties>
-		<java.versao>1.8</java.versao>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	<properties>		
 		<bintray.subject>edson</bintray.subject>
 		<bintray.repo>maven</bintray.repo>
 		<bintray.package>anteros-nextcloud</bintray.package>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<httpcore.version>4.4.12</httpcore.version>
-		<httpclient.version>4.5.10</httpclient.version>
-		<httpasyncclient.version>4.1.4</httpasyncclient.version>
-		<commons-logging.version>1.1.1</commons-logging.version>
-		<sardine.version>5.9</sardine.version>
-		<commons-io.version>2.6</commons-io.version>
+		<java.versao>1.8</java.versao>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <httpcore.version>4.4.12</httpcore.version>
+        <httpasyncclient.version>4.1.4</httpasyncclient.version>
+        <httpclient.version>4.5.10</httpclient.version>
+        <slf4j-api.version>1.7.27</slf4j-api.version>
+        <slf4j-simple.version>1.7.27</slf4j-simple.version>
+        <sardine.version>5.9</sardine.version>
+        <commons-io.version>2.6</commons-io.version>
+        <netbeans.hint.license>gpl30</netbeans.hint.license>
 	</properties>
 
 
@@ -98,17 +100,19 @@
 			<artifactId>Anteros-Core</artifactId>
 			<version>[1.0.0,)</version>
 		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>${commons-logging.version}</version>
-		</dependency>
+		
 
 		<dependency>
 			<groupId>com.github.lookfirst</groupId>
 			<artifactId>sardine</artifactId>
 			<version>${sardine.version}</version>
 		</dependency>
+		
+		<dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
+        </dependency>
 
 		<dependency>
 			<groupId>commons-codec</groupId>

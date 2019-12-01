@@ -25,8 +25,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -46,24 +46,60 @@ public class NextcloudConnectorTest {
     private static final String TESTGROUP = "testgroup";
     private static final String TEST_FOLDER = "new-test-folder";
     private static final String TESTFILE = "test.txt";
+    private static final String TESTFILE2 = "test2.txt";
+    private static final String TESTFILE3 = "test3-äöüÖÄÜ and with plus + sign \u32A2.txt";
 
-    private String serverName = null;
-    private String userName = null;
-    private String password = null;
+    private static String serverName = null;
+    private static String userName = null;
+    private static String password = null;
+    private static int    serverPort= 443;
 
-    private AnterosNextCloudConnector _nc;
-
-    public NextcloudConnectorTest() {
-    }
+    private static AnterosNextCloudConnector _nc;
 
     @Before
     public void setUp() {
+        TestHelper th= new TestHelper();
+        serverName= th.getServerName();
+        userName= th.getUserName();
+        password= th.getPassword();
+        serverPort= th.getServerPort();
         if (serverName != null)
         {
-            _nc = new AnterosNextCloudConnector(serverName, true, 0, userName, password);
+            _nc = new AnterosNextCloudConnector(serverName, true, serverPort, userName, password);
         }
     }
 
+    @AfterClass
+    public static void tearDown() {
+        if (serverName != null)
+        {
+            try
+            {
+                _nc.removeFile(TESTFILE);
+            }
+            catch (Exception ex)
+            {
+                // Catch any errors
+            }
+            try
+            {
+                _nc.removeFile(TESTFILE2);
+            }
+            catch (Exception ex)
+            {
+                // Catch any errors
+            }
+            try
+            {
+                _nc.removeFile(TESTFILE3);
+            }
+            catch (Exception ex)
+            {
+                // Catch any errors
+            }
+        }
+    }
+    
     @Test
     public void t01_testCreateUser() {
         System.out.println("createUser");
@@ -120,7 +156,7 @@ public class NextcloudConnectorTest {
     }
 
     @Test
-    public void t06_testGetUser() throws InterruptedException, ExecutionException {
+    public void t06_testGetUser() {
         System.out.println("getUser");
         if (_nc != null)
         {
@@ -154,7 +190,7 @@ public class NextcloudConnectorTest {
     }
 
     @Test
-    public void t09_testGetGroups_0args() throws InterruptedException, ExecutionException {
+    public void t09_testGetGroups_0args() {
         System.out.println("getGroups");
         if (_nc != null)
         {
@@ -165,7 +201,7 @@ public class NextcloudConnectorTest {
     }
 
     @Test
-    public void t10_testGetGroups_3args() throws InterruptedException, ExecutionException {
+    public void t10_testGetGroups_3args() {
         System.out.println("getGroups");
         if (_nc != null)
         {
@@ -288,6 +324,12 @@ public class NextcloudConnectorTest {
         System.out.println("createFolder");
         if (_nc != null)
         {
+
+            boolean result = _nc.folderExists(TEST_FOLDER);
+            if (result)
+            {
+                _nc.deleteFolder(TEST_FOLDER);
+            }
             _nc.createFolder(TEST_FOLDER);
         }
     }
@@ -337,6 +379,27 @@ public class NextcloudConnectorTest {
     }
 
     @Test
+    public void t25_2_testUploadFile() {
+        System.out.println("uploadFile 0Bytes");
+        if (_nc != null)
+        {
+            InputStream inputStream = new ByteArrayInputStream("".getBytes());
+            _nc.uploadFile(inputStream, TESTFILE2);
+        }
+    }
+
+    @Test
+    public void t25_3_testUploadFile() {
+        System.out.println("uploadFile umlauts");
+        if (_nc != null)
+        {
+            InputStream inputStream = new ByteArrayInputStream("".getBytes());
+            _nc.uploadFile(inputStream, TESTFILE3);
+        }
+    }
+
+    
+    @Test
     public void t26_testFileExists() {
         System.out.println("fileExists");
         if (_nc != null)
@@ -349,6 +412,16 @@ public class NextcloudConnectorTest {
         }
     }
 
+    @Test
+    public void t26_2_testFileExists2() {
+        System.out.println("fileExists2");
+        if (_nc != null)
+        {
+            boolean result = _nc.fileExists(TESTFILE3);
+            assertTrue(result);
+        }
+    }
+    
     @Test
     public void t27_testRemoveFile() {
         System.out.println("removeFile");
@@ -388,7 +461,7 @@ public class NextcloudConnectorTest {
             _nc.createFolder(TEST_FOLDER+"/"+TEST_FOLDER+"_sub");
 
             String rootPath = "";
-            List<String> result = _nc.listFolderContent(rootPath, 2);
+            List<String> result = _nc.listFolderContent(TEST_FOLDER, -1);
 
             //cleanup
             _nc.deleteFolder(TEST_FOLDER);

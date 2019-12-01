@@ -1,24 +1,23 @@
 package br.com.anteros.nextcloud.api.webdav;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import com.github.sardine.Sardine;
 
 import br.com.anteros.nextcloud.api.ServerConfig;
-import br.com.anteros.nextcloud.api.exception.NextCloudApiException;
-import br.com.anteros.nextcloud.api.utils.WebDavInputStream;
+import br.com.anteros.nextcloud.api.exception.NextcloudApiException;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 /**
- * 
- * @author tott 
- * modified: Edson Martins
+ *
+ * @author tott
  *
  */
-public class Files extends AWebDavHandler{
+public class Files extends AWebdavHandler{
 
     public Files(ServerConfig serverConfig) {
         super(serverConfig);
@@ -49,7 +48,7 @@ public class Files extends AWebDavHandler{
             sardine.put(path, inputStream);
         } catch (IOException e)
         {
-            throw new NextCloudApiException(e);
+            throw new NextcloudApiException(e);
         }
     }
 
@@ -95,7 +94,7 @@ public class Files extends AWebDavHandler{
         try
         {
             in = sardine.get(path);
-            byte[] buffer = new byte[AWebDavHandler.FILE_BUFFER_SIZE];
+            byte[] buffer = new byte[AWebdavHandler.FILE_BUFFER_SIZE];
             int bytesRead;
             File targetFile = new File(downloadDirPath);
             try (OutputStream outStream = new FileOutputStream(targetFile))
@@ -110,7 +109,7 @@ public class Files extends AWebDavHandler{
             status = true;
         } catch (IOException e)
         {
-            throw new NextCloudApiException(e);
+            throw new NextcloudApiException(e);
         } finally
         {
             sardine.shutdown();
@@ -122,28 +121,4 @@ public class Files extends AWebDavHandler{
         return status;
     }
 
-    /**
-     * Downloads the file at the specified remotepath as an InputStream,
-     *
-     * @param remotePath Remotepath where the file is saved in the nextcloud
-     * server
-     * @return InputStream
-     * @throws IOException  In case of IO errors
-     */
-    public InputStream downloadFile(String remotePath) throws IOException {
-        String path = buildWebdavPath(remotePath);
-        Sardine sardine = buildAuthSardine();
-
-        WebDavInputStream in = null;
-        try
-        {
-            in = new WebDavInputStream(sardine, sardine.get(path));
-        } catch (IOException e)
-        {
-            sardine.shutdown();
-            throw new NextCloudApiException(e);
-        }
-        return in;
-    }
-    
 }

@@ -30,7 +30,7 @@ import br.com.anteros.nextcloud.api.ServerConfig;
 import br.com.anteros.nextcloud.api.exception.MoreThanOneShareFoundException;
 import br.com.anteros.nextcloud.api.provisioning.ShareData;
 import br.com.anteros.nextcloud.api.utils.ConnectorCommon;
-import br.com.anteros.nextcloud.api.utils.NextCloudResponseHelper;
+import br.com.anteros.nextcloud.api.utils.NextcloudResponseHelper;
 import br.com.anteros.nextcloud.api.utils.XMLAnswer;
 import br.com.anteros.nextcloud.api.utils.XMLAnswerParser;
 
@@ -39,6 +39,9 @@ import br.com.anteros.nextcloud.api.utils.XMLAnswerParser;
  * @author a.schild
  *
  * https://docs.nextcloud.com/server/11/developer_manual/core/ocs-share-api.html
+ * 
+ * When specifying paths, you don't have to specify any webdav roots, or 
+ * remote.php ... stuff. Just use the root of your file store directly
  *
  */
 public class FilesharingConnector
@@ -82,7 +85,7 @@ public class FilesharingConnector
      */
     public List<Share> getShares(String path, boolean reShares, boolean subShares)
     {
-        return NextCloudResponseHelper.getAndCheckStatus(getSharesAsync(path,reShares,subShares)).getShares();
+        return NextcloudResponseHelper.getAndCheckStatus(getSharesAsync(path,reShares,subShares)).getShares();
     }
 
     /**
@@ -119,7 +122,7 @@ public class FilesharingConnector
      */
     public Share getShareInfo(int shareId)
     {
-        SharesXMLAnswer xa= NextCloudResponseHelper.getAndCheckStatus(getShareInfoAsync(shareId));
+        SharesXMLAnswer xa= NextcloudResponseHelper.getAndCheckStatus(getShareInfoAsync(shareId));
         if (xa.getShares() == null)
         {
             return null;
@@ -161,7 +164,7 @@ public class FilesharingConnector
             String password,
             SharePermissions permissions)
     {
-        return NextCloudResponseHelper.getAndCheckStatus(doShareAsync(path, shareType, shareWithUserOrGroupIdOrEmail, publicUpload, password, permissions)).getShare();
+        return NextcloudResponseHelper.getAndCheckStatus(doShareAsync(path, shareType, shareWithUserOrGroupIdOrEmail, publicUpload, password, permissions)).getShare();
     }
 
     /**
@@ -213,7 +216,7 @@ public class FilesharingConnector
      */
     public boolean editShare(int shareId, ShareData key, String value)
     {
-        return NextCloudResponseHelper.isStatusCodeOkay(editShareAsync(shareId, key, value));
+        return NextcloudResponseHelper.isStatusCodeOkay(editShareAsync(shareId, key, value));
     }
 
     /**
@@ -239,7 +242,7 @@ public class FilesharingConnector
      */
     public boolean editShare(int shareId, Map<ShareData,String> values)
     {
-        return NextCloudResponseHelper.isStatusCodeOkay(editShareAsync(shareId, values));
+        return NextcloudResponseHelper.isStatusCodeOkay(editShareAsync(shareId, values));
     }
 
     /**
@@ -263,7 +266,7 @@ public class FilesharingConnector
      */
     public boolean deleteShare(int shareId)
     {
-        return NextCloudResponseHelper.isStatusCodeOkay(deleteShareAsync(shareId));
+        return NextcloudResponseHelper.isStatusCodeOkay(deleteShareAsync(shareId));
     }
 
     /**

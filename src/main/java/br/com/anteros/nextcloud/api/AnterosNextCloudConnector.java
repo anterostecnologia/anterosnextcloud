@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 import br.com.anteros.nextcloud.api.filesharing.FilesharingConnector;
 import br.com.anteros.nextcloud.api.filesharing.Share;
@@ -44,20 +43,12 @@ import br.com.anteros.nextcloud.api.webdav.Folders;
 
 public class AnterosNextCloudConnector {
 
-	private final ServerConfig    _serverConfig;
+    private final ServerConfig    _serverConfig;
     private final ProvisionConnector pc;
     private final FilesharingConnector fc;
     private final Folders fd;
     private final Files fl;
 
-    /**
-     * 
-     * @param serverName    Name or IP of server of your nextcloud instance
-     * @param useHTTPS      Set true when https should be used
-     * @param port          Use 443 for https and 80 for non-https in most cases
-     * @param userName      User for login
-     * @param password      Password for login
-     */
     public AnterosNextCloudConnector(String serverName, boolean useHTTPS, int port, String userName, String password)
     {
         _serverConfig= new ServerConfig(serverName, useHTTPS, port, userName, password);
@@ -508,10 +499,8 @@ public class AnterosNextCloudConnector {
      * Get all group IDs of this instance
      *
      * @return all group IDs
-     * @throws ExecutionException 
-     * @throws InterruptedException 
      */
-    public List<String> getGroups() throws InterruptedException, ExecutionException
+    public List<String> getGroups()
     {
         return pc.getGroups();
     }
@@ -523,10 +512,8 @@ public class AnterosNextCloudConnector {
      * @param limit pass -1 for no limit
      * @param offset pass -1 for no offset
      * @return matching group IDs
-     * @throws ExecutionException 
-     * @throws InterruptedException 
      */
-    public List<String> getGroups(String search, int limit, int offset) throws InterruptedException, ExecutionException
+    public List<String> getGroups(String search, int limit, int offset)
     {
         return pc.getGroups(search, limit, offset);
     }
@@ -826,7 +813,7 @@ public class AnterosNextCloudConnector {
         return fc.editShareAsync(shareId, values);
     }
 
-    /**
+        /**
      * Download the file from the remotepath to the download path specified in the
      *
      * @param remotepath Remotepath of the file to be downloaded from the nextcloud server
@@ -837,18 +824,6 @@ public class AnterosNextCloudConnector {
     public boolean downloadFile(String remotepath, String downloadpath) throws IOException
     {
         return fl.downloadFile(remotepath, downloadpath);
-    }
-
-    /**
-     * Download the file from the remotepath to an InputStream
-     *
-     * @param remotepath Remotepath of the file to be downloaded from the nextcloud server
-     * @return InputStream (Don't forget to close the InputStream once you are done with it)
-     * @throws java.io.IOException In case of IO errors
-     */
-    public InputStream downloadFile(String remotepath) throws IOException
-    {
-        return fl.downloadFile(remotepath);
     }
 
     /**

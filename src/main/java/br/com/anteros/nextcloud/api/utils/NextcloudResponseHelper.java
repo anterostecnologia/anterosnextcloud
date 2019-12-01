@@ -2,14 +2,14 @@ package br.com.anteros.nextcloud.api.utils;
 
 import java.util.concurrent.CompletableFuture;
 
-import br.com.anteros.nextcloud.api.exception.NextCloudApiException;
-import br.com.anteros.nextcloud.api.exception.NextCloudOperationFailedException;
+import br.com.anteros.nextcloud.api.exception.NextcloudApiException;
+import br.com.anteros.nextcloud.api.exception.NextcloudOperationFailedException;
 
-public class NextCloudResponseHelper
+public class NextcloudResponseHelper
 {
     public static final int NC_OK= 100; // Nextcloud OK message
 
-    private NextCloudResponseHelper() {
+    private NextcloudResponseHelper() {
     }
 
     public static <A extends XMLAnswer> A getAndCheckStatus(CompletableFuture<A> answer)
@@ -19,7 +19,7 @@ public class NextCloudResponseHelper
         {
             return xmlanswer;
         }
-        throw new NextCloudOperationFailedException(xmlanswer.getStatusCode(), xmlanswer.getMessage());
+        throw new NextcloudOperationFailedException(xmlanswer.getStatusCode(), xmlanswer.getMessage());
     }
 
     public static <A extends XMLAnswer> boolean isStatusCodeOkay(CompletableFuture<A> answer)
@@ -37,7 +37,7 @@ public class NextCloudResponseHelper
         try {
             return answer.get();
         } catch (Exception e) {
-            throw new NextCloudApiException(e);
+            throw new NextcloudApiException(e);
         }
     }
 }

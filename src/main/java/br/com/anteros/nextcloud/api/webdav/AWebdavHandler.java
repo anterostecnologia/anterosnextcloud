@@ -1,31 +1,46 @@
+/*
+ * Copyright (C) 2018 a.schild
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package br.com.anteros.nextcloud.api.webdav;
-
-import java.io.IOException;
-
-import org.apache.http.client.utils.URIBuilder;
 
 import com.github.sardine.Sardine;
 import com.github.sardine.SardineFactory;
 
-import br.com.anteros.core.log.Logger;
-import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.nextcloud.api.ServerConfig;
-import br.com.anteros.nextcloud.api.exception.NextCloudApiException;
+import br.com.anteros.nextcloud.api.exception.NextcloudApiException;
 
+import java.io.IOException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.utils.URIBuilder;
 
 /**
  *
  * @author a.schild
  */
-public abstract class AWebDavHandler {
-	protected static Logger LOG = LoggerProvider.getInstance().getLogger(AWebDavHandler.class.getName());
-
+public abstract class AWebdavHandler {
+    private static final Log LOG = LogFactory.getLog(AWebdavHandler.class);
+    
     public static final int  FILE_BUFFER_SIZE= 4096;
     private static final String WEB_DAV_BASE_PATH = "remote.php/webdav/";
     
     private final ServerConfig _serverConfig;
 
-    public AWebDavHandler(ServerConfig serverConfig) {
+    public AWebdavHandler(ServerConfig serverConfig) {
         _serverConfig = serverConfig;
     }
     
@@ -74,7 +89,7 @@ public abstract class AWebDavHandler {
             return sardine.exists(path);
         } catch (IOException e)
         {
-            throw new NextCloudApiException(e);
+            throw new NextcloudApiException(e);
         }
         finally
         {
@@ -102,7 +117,7 @@ public abstract class AWebDavHandler {
         try {
             sardine.delete(path);
         } catch (IOException e) {
-            throw new NextCloudApiException(e);
+            throw new NextcloudApiException(e);
         }
         finally
         {
