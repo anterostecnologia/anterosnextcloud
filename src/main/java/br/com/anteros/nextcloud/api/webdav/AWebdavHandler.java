@@ -55,8 +55,10 @@ public abstract class AWebdavHandler {
         URIBuilder uB= new URIBuilder()
         .setScheme(_serverConfig.isUseHTTPS() ? "https" : "http")
         .setHost(_serverConfig.getServerName())
-        .setPort(_serverConfig.getPort())
         .setPath( WEB_DAV_BASE_PATH + remotePath);
+        if (_serverConfig.getPort()>0) {
+        	uB.setPort(_serverConfig.getPort());
+        }
         return uB.toString();
     }
     
