@@ -149,4 +149,16 @@ public class Share
             return new SharePermissions(v);
         }
     }
+
+	public void setFileTarget(String fileTarget) {
+		this.fileTarget = fileTarget;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
 }

@@ -220,6 +220,7 @@ public class Folders extends AWebdavHandler{
                                     }
                                     outStream.flush();
                                     outStream.close();
+                                    in.close();
                                 }
                             }
                     }
