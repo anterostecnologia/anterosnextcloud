@@ -23,6 +23,7 @@ import br.com.anteros.nextcloud.api.provisioning.UsersXMLAnswer;
 import br.com.anteros.nextcloud.api.utils.ListXMLAnswer;
 import br.com.anteros.nextcloud.api.utils.XMLAnswer;
 import br.com.anteros.nextcloud.api.webdav.Files;
+import br.com.anteros.nextcloud.api.webdav.FolderItemDetail;
 import br.com.anteros.nextcloud.api.webdav.Folders;
 
 public class AnterosNextCloudConnector {
@@ -552,6 +553,38 @@ public class AnterosNextCloudConnector {
     public List<String> listFolderContent(String path, int depth)
     {
         return fd.listFolderContent(path, depth);
+    }
+    
+    /**
+     * List all file names and subfolders of the specified path traversing
+     * into subfolders to the given depth.
+     *
+     * @param path path of the folder
+     * @param depth depth of recursion while listing folder contents
+     *              (use 0 for single resource, 1 for directory listing,
+     *               -1 for infinite recursion)
+     * @param excludeFolderNames excludes the folder names from the result list
+     * @return found file names and subfolders
+     */
+    public List<String> listFolderContent(String path, int depth, boolean excludeFolderNames)
+    {
+        return fd.listFolderContent(path, depth, excludeFolderNames);
+    }
+    
+    /**
+     * List all file names and subfolders of the specified path traversing
+     * into subfolders to the given depth.
+     *
+     * @param path path of the folder
+     * @param depth depth of recursion while listing folder contents
+     *              (use 0 for single resource, 1 for directory listing,
+     *               -1 for infinite recursion)
+     * @param excludeFolderNames excludes the folder names from the result list
+     * @return found file names and subfolders
+     */
+    public List<FolderItemDetail> listDetailsFolderContent(String path, int depth, boolean excludeFolderNames)
+    {
+        return fd.listDetailsFolderContent(path, depth, excludeFolderNames);
     }
 
     /**

@@ -17,6 +17,7 @@
 package br.com.anteros.nextcloud.api.webdav;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -105,8 +106,11 @@ public class Folders extends AWebdavHandler{
         }
         for (DavResource res : resources)
         {
-            retVal.add(res.getName());
+        	if (!res.getPath().endsWith(remotePath)) {
+        		retVal.add(res.getName());
+        	}
         }
+        Collections.sort(retVal);
         return retVal;
     }
 
@@ -157,6 +161,110 @@ public class Folders extends AWebdavHandler{
     public void deleteFolder(String remotePath)
     {
         deletePath(remotePath);
+    }
+    
+    /**
+     * List all file names and subfolders of the specified path traversing 
+     * into subfolders to the given depth.
+     *
+     * @param remotePath path of the folder
+     * @param depth depth of recursion while listing folder contents
+     * @param excludeFolderNames excludes the folder names from the list
+     * @return found file names and subfolders
+     */
+    public List<String> listFolderContent(String remotePath, int depth, boolean excludeFolderNames)
+    {
+        String path = buildWebdavPath(remotePath);
+
+        List<String> retVal = new LinkedList<>();
+        Sardine sardine = buildAuthSardine();
+        List<DavResource> resources;
+        try {
+            resources = sardine.list(path, depth);
+        } catch (IOException e) {
+            throw new NextcloudApiException(e);
+        }
+        finally
+        {
+            try
+            {
+                sardine.shutdown();
+            }
+            catch (IOException ex)
+            {
+                LOG.warn("error in closing sardine connector", ex);
+            }
+        }
+        for (DavResource res : resources)
+        {
+            if (excludeFolderNames) {
+                if (!res.isDirectory()) {
+                    retVal.add(res.getName());
+                }
+            }
+            else {
+                retVal.add(res.getName());
+            }
+        }
+        return retVal;
+    }
+    
+    
+    /**
+     * List all file names and subfolders of the specified path traversing 
+     * into subfolders to the given depth.
+     *
+     * @param remotePath path of the folder
+     * @param depth depth of recursion while listing folder contents
+     * @param excludeFolderNames excludes the folder names from the list
+     * @return found file names and subfolders
+     */
+    public List<FolderItemDetail> listDetailsFolderContent(String remotePath, int depth, boolean excludeFolderNames)
+    {
+        String path = buildWebdavPath(remotePath);
+
+        List<FolderItemDetail> retVal = new LinkedList<>();
+        Sardine sardine = buildAuthSardine();
+        List<DavResource> resources;
+        try {
+            resources = sardine.list(path, depth);
+        } catch (IOException e) {
+            throw new NextcloudApiException(e);
+        }
+        finally
+        {
+            try
+            {
+                sardine.shutdown();
+            }
+            catch (IOException ex)
+            {
+                LOG.warn("error in closing sardine connector", ex);
+            }
+        }
+        for (DavResource res : resources)
+        {
+        	FolderItemDetail detail = new FolderItemDetail();
+        	detail.setContentLength(res.getContentLength());
+        	detail.setContentType(res.getContentType());
+        	detail.setCreation(res.getCreation());
+        	detail.setModified(res.getModified());
+        	detail.setDisplayName(res.getDisplayName());
+        	detail.setDirectory(res.isDirectory());
+        	detail.setPath(res.getPath());
+        	detail.setName(res.getName());
+        	
+        	
+            if (excludeFolderNames) {
+                if (!res.isDirectory()) {
+                    retVal.add(detail);
+                }
+            }
+            else {
+                retVal.add(detail);
+            }
+        }
+        return retVal;
     }
 
     /**
