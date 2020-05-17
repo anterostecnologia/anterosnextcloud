@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.anteros</groupId>
 	<artifactId>Anteros-NextCloud</artifactId>
-	<version>1.0.9</version> 
+	<version>1.0.10</version> 
 
 	<properties>		
 		<bintray.subject>edson</bintray.subject>
