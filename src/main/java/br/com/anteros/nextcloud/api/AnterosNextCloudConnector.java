@@ -1,5 +1,6 @@
 package br.com.anteros.nextcloud.api;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -705,14 +706,46 @@ public class AnterosNextCloudConnector {
     }
 
     /** Uploads a file at the specified path with the data from the InputStream
-     *
-     * @param inputStream          InputStream of the file which should be uploaded
-     * @param remotePath           path where the file should be uploaded to
-     */
-    public void uploadFile(InputStream inputStream, String remotePath)
-    {
-        fl.uploadFile(inputStream, remotePath);
-    }
+    *
+    * @param srcFile              The file which should be uploaded
+    * @param remotePath           path where the file should be uploaded to
+    */
+   public void uploadFile(File srcFile, String remotePath)
+   {
+       fl.uploadFile(srcFile, remotePath);
+   }
+
+   
+   /** Uploads a file at the specified path with the data from the InputStream
+    *
+    * @param inputStream          InputStream of the file which should be uploaded
+    * @param remotePath           path where the file should be uploaded to
+    * 
+    * @deprecated Since some nextcloud installations use fpm or fastcgi to connect to php,
+    *             here the uploads might get zero empty on the server
+    *             Use a (temp) file to upload the data, so the content length is known in advance
+    *             https://github.com/a-schild/nextcloud-java-api/issues/20
+    */
+   public void uploadFile(InputStream inputStream, String remotePath)
+   {
+       fl.uploadFile(inputStream, remotePath);
+   }
+
+   /** Uploads a file at the specified path with the data from the InputStream and continueHeader
+    *
+    * @param inputStream          InputStream of the file which should be uploaded
+    * @param remotePath           path where the file should be uploaded to
+    * @param continueHeader       to receive a possible error by the server before any data is sent
+    * 
+    * @deprecated Since some nextcloud installations use fpm or fastcgi to connect to php,
+    *             here the uploads might get zero empty on the server
+    *             Use a (temp) file to upload the data, so the content length is known in advance
+    *             https://github.com/a-schild/nextcloud-java-api/issues/20
+    */
+   public void uploadFile(InputStream inputStream, String remotePath, boolean continueHeader)
+   {
+       fl.uploadFile(inputStream, remotePath, continueHeader);
+   }
 
     /**
      * method to remove files
