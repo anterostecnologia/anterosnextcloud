@@ -4,24 +4,24 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.anteros</groupId>
 	<artifactId>Anteros-NextCloud</artifactId>
-	<version>1.0.13</version> 
+	<version>1.0.14</version>
 
-	<properties>		
+	<properties>
 		<bintray.subject>edson</bintray.subject>
 		<bintray.repo>maven</bintray.repo>
 		<bintray.package>anteros-nextcloud</bintray.package>
 		<java.versao>1.8</java.versao>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <httpcore.version>4.4.12</httpcore.version>
-        <httpasyncclient.version>4.1.4</httpasyncclient.version>
-        <httpclient.version>4.5.10</httpclient.version>
-        <slf4j-api.version>1.7.27</slf4j-api.version>
-        <slf4j-simple.version>1.7.27</slf4j-simple.version>
-        <sardine.version>5.10</sardine.version>
-        <commons-io.version>2.6</commons-io.version>
-        <netbeans.hint.license>gpl30</netbeans.hint.license>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<httpcore.version>4.4.12</httpcore.version>
+		<httpasyncclient.version>4.1.4</httpasyncclient.version>
+		<httpclient.version>4.5.10</httpclient.version>
+		<slf4j-api.version>1.7.27</slf4j-api.version>
+		<slf4j-simple.version>1.7.27</slf4j-simple.version>
+		<sardine.version>5.10</sardine.version>
+		<commons-io.version>2.6</commons-io.version>
+		<netbeans.hint.license>gpl30</netbeans.hint.license>
 	</properties>
 
 
@@ -72,47 +72,47 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
-            <version>${httpcore.version}</version>
-        </dependency>
-        
-        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpasyncclient</artifactId>
-            <version>${httpasyncclient.version}</version>
-        </dependency>
-      
-        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${httpclient.version}</version>
-        </dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>${httpcore.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
 		<dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io.version}</version>
-        </dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpasyncclient</artifactId>
+			<version>${httpasyncclient.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>${httpclient.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons-io.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>br.com.anteros</groupId>
 			<artifactId>Anteros-Core</artifactId>
 			<version>[1.2.6,)</version>
 		</dependency>
-		
+
 
 		<dependency>
 			<groupId>com.github.lookfirst</groupId>
 			<artifactId>sardine</artifactId>
 			<version>${sardine.version}</version>
 		</dependency>
-		
+
 		<dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io.version}</version>
-        </dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons-io.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>commons-codec</groupId>
@@ -127,6 +127,32 @@
 		</dependency>
 
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>local-REPO</id>
+			<url>http://vps4657.publiccloud.com.br:8082/artifactory/libs-release-local</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>local-REPO</id>
+			<url>http://vps4657.publiccloud.com.br:8082/artifactory/libs-release-local</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<profiles>
 		<profile>
