@@ -20,7 +20,7 @@
 		<slf4j-api.version>1.7.27</slf4j-api.version>
 		<slf4j-simple.version>1.7.27</slf4j-simple.version>
 		<sardine.version>5.10</sardine.version>
-		<commons-io.version>2.6</commons-io.version>
+		<commons-io.version>2.7</commons-io.version>
 		<netbeans.hint.license>gpl30</netbeans.hint.license>
 	</properties>
 
