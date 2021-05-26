@@ -21,20 +21,65 @@ package br.com.anteros.nextcloud.api;
  * @author a.schild
  */
 public class ServerConfig {
-    
+
     private String userName;
     private String password;
     private String serverName;
+    private String subPathPrefix;
     private boolean useHTTPS;
     private int port;
+    private boolean trustAllCertificates;
 
-    public ServerConfig(String serverName, boolean useHTTPS, int port, 
-            String userName, String password) {
+    /**
+     * Use this constructor if your nextcloud instance is installed in the
+     * root of the webhosting, like https://nextcloud.company.my/
+     *
+     * @param serverName    ip or dns name of server
+     * @param useHTTPS      Use https or http to connect
+     * @param port          Port, usuallay 443 for https and 80 for http
+     * @param userName      User name for authentication
+     * @param password      Password for authentication
+     */
+    public ServerConfig(String serverName,
+                        boolean useHTTPS,
+                        int port,
+                        String userName,
+                        String password) {
         this.userName = userName;
         this.password = password;
         this.serverName = serverName;
+        this.subPathPrefix = null;
         this.useHTTPS = useHTTPS;
         this.port = port;
+        this.trustAllCertificates = false;
+    }
+
+    /**
+     * Is this constructor if your nextcloud is installed in a subfolder of the server
+     * like https://nextcloud.company.my/<b>nextcloud/</b>
+     *
+     * @param serverName    ip or dns name of server
+     * @param useHTTPS      Use https or http to connect
+     * @param port          Port, usuallay 443 for https and 80 for http
+     * @param subPathPrefix Path to your nextcloud instance, without starting and trailing /
+     *                      can be null if installed in root
+     * @param userName      User name for authentication
+     * @param password      Password for authentication
+     */
+    public ServerConfig(
+            String serverName,
+            boolean useHTTPS,
+            int port,
+            String subPathPrefix,
+            String userName,
+            String password) {
+        this.userName = userName;
+        this.password = password;
+        this.serverName = serverName;
+        this.subPathPrefix = subPathPrefix;
+        this.useHTTPS = useHTTPS;
+        this.port = port;
+        this.trustAllCertificates = false;
     }
 
     /**
@@ -73,10 +118,41 @@ public class ServerConfig {
     }
 
     /**
-     * @param serverName the serverName to set
+     * @param serverName
+     *            the serverName to set, defaults to <code>null</code>
      */
-    public void setServerName(String serverName) {
+    public void setServerName(String serverName){
         this.serverName = serverName;
+    }
+
+    /**
+     * @deprecated Use getSubPathPrefix() instead
+     * @return the configured subpath prefix
+     */
+    public String getSubpathPrefix(){
+        return getSubPathPrefix();
+    }
+
+    /**
+     * @return the configured sub path prefix
+     */
+    public String getSubPathPrefix(){
+        return subPathPrefix;
+    }
+
+    /**
+     * @deprecated Use setSubPathPrefix() instead
+     * @param subpathPrefix to apply
+     */
+    public void setSubpathPrefix(String subpathPrefix){
+        setSubPathPrefix(subpathPrefix);
+    }
+
+    /**
+     * @param subPathPrefix to apply
+     */
+    public void setSubPathPrefix(String subPathPrefix){
+        this.subPathPrefix = subPathPrefix;
     }
 
     /**
@@ -107,6 +183,21 @@ public class ServerConfig {
         this.port = port;
     }
 
-    
-    
+    /**
+     * @param trustAllCertificates if the client should accept any
+     *          HTTPScertificate (e.g. to work against a self-signed
+     * 	    certificate)
+     */
+    public void setTrustAllCertificates(boolean trustAllCertificates){
+        this.trustAllCertificates = trustAllCertificates;
+    }
+
+    /**
+     * @return if the client should accept any HTTPS certificate (e.g. to work against a self-signed
+     *         certificate)
+     */
+    public boolean isTrustAllCertificates(){
+        return trustAllCertificates;
+    }
+
 }

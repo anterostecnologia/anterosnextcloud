@@ -6,6 +6,7 @@ import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -65,6 +66,7 @@ public class ConnectorCommon
             URI url= buildUrl(part, postParams);
 
             HttpRequestBase request = new HttpPost(url.toString());
+
             return executeRequest(parser, request);
         } catch (IOException e) {
             throw new NextcloudApiException(e);
@@ -120,11 +122,11 @@ public class ConnectorCommon
         request.addHeader("OCS-APIRequest", "true");
         request.addHeader("Content-Type", "application/x-www-form-urlencoded");
         request.setProtocolVersion(HttpVersion.HTTP_1_1);
-
-        HttpClientContext context = prepareContext();
+        String auth = serverConfig.getUserName()+":"+serverConfig.getPassword();
+        request.setHeader("Authorization", "Basic "+Base64.getEncoder().encodeToString(auth.getBytes()));
 
         CompletableFuture<R> futureResponse = new CompletableFuture<>();
-        HttpAsyncClientSingleton.HTTPC_CLIENT.execute(request, context, new ResponseCallback<>(parser, futureResponse));
+        HttpAsyncClientSingleton.HTTPC_CLIENT.execute(request, new ResponseCallback<>(parser, futureResponse));
         return futureResponse;
     }
 

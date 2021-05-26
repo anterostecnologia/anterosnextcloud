@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.anteros</groupId>
 	<artifactId>Anteros-NextCloud</artifactId>
-	<version>1.0.14</version>
+	<version>1.0.16</version>
 
 	<properties>
 		<bintray.subject>edson</bintray.subject>
@@ -14,9 +14,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<httpcore.version>4.4.12</httpcore.version>
+		<httpcore.version>4.4.14</httpcore.version>
 		<httpasyncclient.version>4.1.4</httpasyncclient.version>
-		<httpclient.version>4.5.10</httpclient.version>
+		<httpclient.version>4.5.6</httpclient.version>
 		<slf4j-api.version>1.7.27</slf4j-api.version>
 		<slf4j-simple.version>1.7.27</slf4j-simple.version>
 		<sardine.version>5.10</sardine.version>
@@ -246,85 +246,8 @@
 				</repository>
 			</distributionManagement>
 
-			<repositories>
-				<repository>
-					<id>bintray</id>
-					<url>http://dl.bintray.com/${bintray.subject}/${bintray.repo}</url>
-					<releases>
-						<enabled>true</enabled>
-					</releases>
-					<snapshots>
-						<enabled>false</enabled>
-					</snapshots>
-				</repository>
-			</repositories>
 		</profile>
-		<profile>
-			<id>bintray</id>
-			<build>
-				<pluginManagement>
-					<plugins>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-compiler-plugin</artifactId>
-							<version>3.1</version>
-							<configuration>
-								<target>${java.versao}</target>
-								<source>${java.versao}</source>
-							</configuration>
-						</plugin>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-source-plugin</artifactId>
-							<executions>
-								<execution>
-									<id>attach-sources</id>
-									<goals>
-										<goal>jar</goal>
-									</goals>
-								</execution>
-							</executions>
-						</plugin>
-						<plugin>
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-javadoc-plugin</artifactId>
-							<executions>
-								<execution>
-									<id>attach-javadocs</id>
-									<goals>
-										<goal>jar</goal>
-									</goals>
 
-								</execution>
-							</executions>
-							<configuration>
-								<additionalparam>-Xdoclint:none</additionalparam>
-							</configuration>
-						</plugin>
-					</plugins>
-				</pluginManagement>
-			</build>
-
-			<distributionManagement>
-				<repository>
-					<id>bintray-REPO-deploy</id>
-					<url>https://api.bintray.com/maven/${bintray.subject}/${bintray.repo}/${bintray.package}/;publish=1;override=1</url>
-				</repository>
-			</distributionManagement>
-
-			<repositories>
-				<repository>
-					<id>bintray</id>
-					<url>http://dl.bintray.com/${bintray.subject}/${bintray.repo}</url>
-					<releases>
-						<enabled>true</enabled>
-					</releases>
-					<snapshots>
-						<enabled>false</enabled>
-					</snapshots>
-				</repository>
-			</repositories>
-		</profile>
 		<profile>
 			<id>local</id>
 			<build>

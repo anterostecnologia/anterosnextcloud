@@ -348,4 +348,16 @@ public class Folders extends AWebdavHandler{
             }
         }
     }
+
+
+    /**
+     * method to rename/move folder
+     *
+     * @param oldPath path of the folder which should be renamed/moved
+     * @param newPath path of the folder which should be renamed/moved
+     * @param overwriteExisting overwrite if target already exists
+     */
+    public void renameFolder(String oldPath, String newPath, boolean overwriteExisting) {
+        renamePath(oldPath, newPath, overwriteExisting);
+    }
 }

@@ -3,6 +3,8 @@ package br.com.anteros.nextcloud.api;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +36,7 @@ public class AnterosNextCloudConnector {
     private final FilesharingConnector fc;
     private final Folders fd;
     private final Files fl;
+    private final ConfigConnector cc;
 
     public AnterosNextCloudConnector(String serverName, boolean useHTTPS, int port, String userName, String password)
     {
@@ -42,6 +45,31 @@ public class AnterosNextCloudConnector {
         fc= new FilesharingConnector(_serverConfig);
         fd= new Folders(_serverConfig);
         fl= new Files(_serverConfig);
+        cc= new ConfigConnector(_serverConfig);
+    }
+
+    /**
+     * @param serviceUrl 	url of the nextcloud instance, e.g. https://nextcloud.instance.com:8443/cloud
+     * @param userName 		User for login
+     * @param password 		Password for login
+     */
+    public AnterosNextCloudConnector(String serviceUrl, String userName, String password){
+        try {
+            URL _serviceUrl = new URL(serviceUrl);
+            boolean useHTTPS = serviceUrl.startsWith("https");
+            _serverConfig = new ServerConfig(_serviceUrl.getHost(), useHTTPS, _serviceUrl.getPort(),
+                    userName, password);
+            if(!_serviceUrl.getPath().isEmpty()) {
+                _serverConfig.setSubPathPrefix(_serviceUrl.getPath());
+            }
+            pc = new ProvisionConnector(_serverConfig);
+            fc = new FilesharingConnector(_serverConfig);
+            cc= new ConfigConnector(_serverConfig);
+            fd = new Folders(_serverConfig);
+            fl = new Files(_serverConfig);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     /**
@@ -885,6 +913,17 @@ public class AnterosNextCloudConnector {
     public void downloadFolder(String remotepath, String downloadpath) throws IOException
     {
          fd.downloadFolder(remotepath, downloadpath);
+    }
+
+    /**
+     * method to rename/move files
+     *
+     * @param oldPath path of the file which should be renamed/moved
+     * @param newPath path of the file which should be renamed/moved
+     * @param overwriteExisting overwrite if target already exists
+     */
+    public void renameFile(String oldPath, String newPath, boolean overwriteExisting) {
+        fd.renamePath(oldPath, newPath, overwriteExisting);
     }
 
 }

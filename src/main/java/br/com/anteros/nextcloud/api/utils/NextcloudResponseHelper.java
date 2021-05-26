@@ -7,7 +7,8 @@ import br.com.anteros.nextcloud.api.exception.NextcloudOperationFailedException;
 
 public class NextcloudResponseHelper
 {
-    public static final int NC_OK= 100; // Nextcloud OK message
+    public static final int NC_OK1= 100; // Nextcloud OK message
+    public static final int NC_OK2= 200; // Nextcloud OK message
 
     private NextcloudResponseHelper() {
     }
@@ -29,7 +30,7 @@ public class NextcloudResponseHelper
 
     public static  boolean isStatusCodeOkay(XMLAnswer answer)
     {
-        return answer.getStatusCode() == NC_OK;
+        return answer.getStatusCode() == NC_OK1 || answer.getStatusCode() == NC_OK2;
     }
 
     public static <A> A getAndWrapException(CompletableFuture<A> answer)

@@ -20,6 +20,8 @@ import br.com.anteros.core.log.LoggerProvider;
 import br.com.anteros.nextcloud.api.ServerConfig;
 import br.com.anteros.nextcloud.api.exception.NextcloudApiException;
 import br.com.anteros.nextcloud.api.utils.WebdavInputStream;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 /**
  *
@@ -98,7 +100,8 @@ public class Files extends AWebdavHandler{
 
         try
         {
-            sardine.put(path, inputStream, null, continueHeader);
+            byte[] bytes = IOUtils.toByteArray(inputStream);
+            sardine.put(path, bytes);
         } catch (IOException e)
         {
             throw new NextcloudApiException(e);

@@ -40,7 +40,7 @@ import br.com.anteros.nextcloud.api.utils.XMLAnswerParser;
  */
 public class ProvisionConnector
 {
-    private final static String ROOT_PART= "ocs/v1.php/cloud/";
+    private final static String ROOT_PART= "ocs/v2.php/cloud/";
     private final static String USERS_PART= ROOT_PART+"users";
     private final static String GROUPS_PART= ROOT_PART+"groups";
 
